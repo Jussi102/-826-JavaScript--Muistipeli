@@ -13,49 +13,62 @@ let firstCard = null;
 let secondCard = null;
 let lockBoard = false;
 let attempts = 0;
+let currentCardCount = 0;
+
+const gameOverScreen = document.getElementById('game-over');
 
 function shuffle(array) {
 array.sort(() => Math.random() - 0.5);
 }
 
+
 export function createBoard(cardCount) {
-const selectedCards = allCards.slice(0, cardCount / 2);
-const cards = [...selectedCards, ...selectedCards];
 
+    currentCardCount = cardCount;
+    gameOverScreen.classList.add('hidden');
+    gameBoard.style.gridTemplateColumns =
+        `repeat(${Math.min(4, cardCount / 2)}, 100px)`;
 
-shuffle(cards);
+    const selectedCards = allCards.slice(0, cardCount / 2);
+    const cards = [...selectedCards, ...selectedCards];
 
-cards.forEach(card => {
-    const cardElement = createCardElement(card);
+    shuffle(cards);
 
-    cardElement.addEventListener('click', () => {
-        flipCard(cardElement, handleCardFlip);
-    });
+    cards.forEach(card => {
+        const cardElement = createCardElement(card);
 
-    gameBoard.appendChild(cardElement);
+        cardElement.addEventListener('click', () => {
+
+    if (lockBoard) return;
+    if (cardElement === firstCard) return;
+
+    flipCard(cardElement, handleCardFlip);
+
 });
 
-
+        gameBoard.appendChild(cardElement);
+    });
 }
+
+
+
 
 function handleCardFlip(cardElement) {
-if (lockBoard) return;
-if (cardElement === firstCard) return;
+    if (lockBoard) return;
+    if (cardElement === firstCard) return;
 
+    if (!firstCard) {
+        firstCard = cardElement;
+        return;
+    }
 
-if (!firstCard) {
-    firstCard = cardElement;
-    return;
+    secondCard = cardElement;
+    lockBoard = true;
+    attempts++;
+
+    checkForMatch();
 }
 
-secondCard = cardElement;
-lockBoard = true;
-attempts++;
-
-checkForMatch();
-
-
-}
 
 function checkForMatch() {
 const isMatch =
@@ -72,27 +85,31 @@ if (isMatch) {
 }
 
 function disableCards() {
-firstCard.classList.add('matched');
-secondCard.classList.add('matched');
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
 
-resetBoard();
+    resetBoard();
+
+    const matchedCards = gameBoard.querySelectorAll('.matched').length;
+
+    if (matchedCards === currentCardCount) {
+        gameOverScreen.classList.remove('hidden');
+    }
+
 
 
 }
 
 function unflipCards() {
-setTimeout(() => {
-firstCard.classList.remove('flipped');
-secondCard.classList.remove('flipped');
+    setTimeout(() => {
+        firstCard.classList.remove('flipped');
+        secondCard.classList.remove('flipped');
 
+        firstCard.textContent = '';
+        secondCard.textContent = '';
 
-    firstCard.textContent = '';
-    secondCard.textContent = '';
-
-    resetBoard();
-}, 1500);
-
-
+        resetBoard();
+    }, 1500);
 }
 
 function resetBoard() {
@@ -114,3 +131,4 @@ createBoard(cardCount);
 
 
 }
+

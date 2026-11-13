@@ -72,3 +72,57 @@ h1 {
     text-decoration: underline;
     font-style: italic;
 }
+
+
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    gap: 10px;
+    justify-content: center;
+}
+
+.card {
+    width: 100px;
+    height: 100px;
+    box-sizing: border-box;
+    background-color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px black;
+    transition: 0.4s;
+}
+
+.card.matched {
+    visibility: hidden;
+    pointer-events: none;
+}
+.game-over {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #333;
+    color: white;
+    padding: 40px;
+    text-align: center;
+    border: 3px solid white;
+    box-shadow: 0 0 20px black;
+    z-index: 10;
+    width: 300px;
+}
+
+.hidden {
+    display: none;
+}
+
+.game-over h2 {
+    font-size: 2em;
+}
+
+.game-over button {
+    cursor: pointer;
+}
